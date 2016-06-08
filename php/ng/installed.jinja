@@ -49,8 +49,6 @@ php_ppa_{{ state }}:
         - name: {{ state }}
         - pkgs: {{ pkgs|json() }}
         - refresh: True
-        - onchanges:
-            - pkgrepo: php_ppa_{{ state }}
 {% endif %}
 {% endif %}
 
