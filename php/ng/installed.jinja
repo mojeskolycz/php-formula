@@ -33,13 +33,18 @@ php_ppa_env_{{ state }}:
             - LC_ALL: C.UTF-8
         - unless: test -f /etc/apt/sources.list.d/{{ ppa_name|replace('/', '-', 1) }}-trusty.list
 
-php_ppa_{{ state }}:
-    pkgrepo.managed:
-        - ppa: {{ ppa_name }}
+{% if salt['grains.get']('os') == 'Debian' %}
+php_ppa_env_{{ state }}_debian_fix:
+    cmd.run:
+        - name: sed -i 's/{{ salt['grains.get']('oscodename') }}/trusty/g' /etc/apt/sources.list.d/{{ ppa_name|replace('/', '-', 1) }}-{{ salt['grains.get']('oscodename') }}.list
+        - unless: grep -v {{ salt['grains.get']('oscodename') }} /etc/apt/sources.list.d/{{ ppa_name|replace('/', '-', 1) }}-{{ salt['grains.get']('oscodename') }}.list
+        - require_in:
+            - pkg: php_ppa_{{ state }}
         - require:
             - cmd: php_ppa_env_{{ state }}
-        - require_in:
-            - pkg: php_install_{{ state }}
+{% endif %}
+
+php_ppa_{{ state }}:
     pkg.latest:
         - name: {{ state }}
         - pkgs: {{ pkgs|json() }}
