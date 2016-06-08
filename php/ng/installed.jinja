@@ -31,7 +31,7 @@ php_ppa_env_{{ state }}:
         - name: apt-add-repository -y ppa:{{ ppa_name }}
         - env:
             - LC_ALL: C.UTF-8
-        - unless: test -f /etc/apt/sources.list.d/{{ ppa_name|replace('/', '-', 1) }}-trusty.list
+        - unless: test -f /etc/apt/sources.list.d/{{ ppa_name|replace('/', '-', 1) }}-{{ salt['grains.get']('oscodename') }}.list
 
 {% if salt['grains.get']('os') == 'Debian' %}
 php_ppa_env_{{ state }}_debian_fix:
